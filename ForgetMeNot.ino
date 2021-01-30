@@ -5,6 +5,8 @@ ServicePortSerial Sp;
 ///VARIABLES
 byte numBlinks = 6;
 Color gameColors[] =  {RED, YELLOW, GREEN, BLUE};
+Color gameColorsAlt[] = {MAGENTA, ORANGE,CYAN, WHITE};
+
 byte truecolor;
 byte lostcolor;
 byte lostBlink;
@@ -15,8 +17,8 @@ byte displayState = PREP;
 bool canBeMaster;
 bool isMaster;
 byte masterFace;
-byte blinkTrue[6];
-byte blinkLost[6];
+byte blinkTrue[6]; //true colors index
+byte blinkLost[6]; //indicates
 Timer trueTimer;
 Timer hiddenTimer;
 Timer flashTimer;
@@ -25,6 +27,7 @@ bool onFlag = false;
 byte level = 0;
 byte over = 0;
 byte winstate = 0;
+byte numColors = 4;
 
 ///for color ramp
 #define STEP_SIZE 10
@@ -46,16 +49,16 @@ void loop() {
       setupDisplay();
       break;
     case LOSTREADY:
-      Sp.println("LOSTREADY");
+//      Sp.println("LOSTREADY");
       lostReady();
       readyDisplay();
       break;
     case END:
-      Sp.println("END");
+//      Sp.println("END");
       endLoop();
       break;
     case GAME:
-      Sp.println("GAME");
+//      Sp.println("GAME");
       gameLoop();
       gameDisplay();
       byte sendData = (gameState << 4) + (over << 1) + (winstate);
@@ -90,18 +93,18 @@ void setupLoop() {
     canBeMaster = false;
   }
   if (buttonSingleClicked() && canBeMaster == true) {
-    Sp.println("buttonx2");
+//    Sp.println("buttonx2");
     setLost();
     gameState = LOSTREADY;
     canBeMaster = false;
     isMaster = true;
-    Sp.println("done button");
+//    Sp.println("done button");
   }
   FOREACH_FACE(f) {
     if (!isValueReceivedOnFaceExpired(f)) {
       byte neighborData = getLastValueReceivedOnFace(f);
-      Sp.print("data:");
-      Sp.println(getGameState(neighborData), BIN);
+//      Sp.print("data:");
+//      Sp.println(getGameState(neighborData), BIN);
       if (getGameState(neighborData) == LOSTREADY) {
         gameState = GAME;
         // displayState = PREP;
@@ -116,12 +119,12 @@ void lostReady() {
   FOREACH_FACE(f) {
     if (!isValueReceivedOnFaceExpired(f)) {
       byte neighborData = getLastValueReceivedOnFace(f);
-      Sp.print("READY: ");
-      Sp.print(f);
-      Sp.print(" ");
-      Sp.println(neighborData, BIN);
+//      Sp.print("READY: ");
+//      Sp.print(f);
+//      Sp.print(" ");
+//      Sp.println(neighborData, BIN);
       if ((neighborData & 3) == 3) {
-        Sp.println("HERE");
+//        Sp.println("HERE");
         level++;
         gameState = END;
         over = 1;
@@ -164,7 +167,7 @@ void gameLoop() {
           if (getLost(neighborData)) {
             lostBlink = true;
             do {
-              lostcolor = random(3);
+              lostcolor = random(numColors);
             } while (lostcolor == truecolor);
           }
         }
@@ -232,20 +235,20 @@ void readyDisplay() {
 void gameDisplay() {
   switch (displayState) {
     case PREP:
-      Sp.println("PREP");
+//      Sp.println("PREP");
       setColor(OFF);
       setColorOnFace(GREEN, masterFace);
       break;
     case TRUE:
-      Sp.println("TRUE");
+//      Sp.println("TRUE");
       setColor(gameColors[truecolor]);
       break;
     case HIDDEN:
-      Sp.println("HIDDEN");
+//      Sp.println("HIDDEN");
       setColor(OFF);
       break;
     case LOST:
-      Sp.println("LOST");
+//      Sp.println("LOST");
       if (lostBlink) {
         setColor(gameColors[lostcolor]);
       } else {
@@ -314,15 +317,17 @@ byte getGameState(byte data) {
 }
 
 void setLost() {
-  Sp.println("setLost");
-  lostBlink = random(numBlinks - 1);
-  for (int i = 0; i < numBlinks; i++) {
-    blinkTrue[i] = random(3);
+//  Sp.println("setLost");
+  lostBlink = random(numBlinks - 1);            // calculate which blink if lost
+  for (int i = 0; i < numBlinks; i++) {  
+    blinkTrue[i] = random(numColors);           // give each blink a colour index
     if (i == lostBlink) {
-      blinkLost[i] = 1;
-    } else {
-      blinkLost[i] = 0;
+      blinkLost[i] = 1;                         // set an array to let the others know who will be lost
+    } else {                                    // and
+      blinkLost[i] = 0;                         // who won't
     }
-    //Sp.println(i);
+    Sp.print(i);
+    Sp.print("-");
+    Sp.println(blinkTrue[i]);
   }
 }
