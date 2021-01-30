@@ -2,8 +2,9 @@
  Global Game Jam Design Lost&Found 2021 for Move38 Blinks
 
 GAME OVERVIEW
+A Single Player Memory Puzzle with 7 Blinks
 
-Forget Me Not is a game children play with by pulling petals off of a flower to determine if a love, loves them back.
+"Forget Me Not" is a game children play with by pulling petals off of a flower to determine if a love, loves them back.
 In ForgetMeNot for Blinks, we recall our lost loves again, and test our memory with this challenging game.
 The petals of the flowers will bloom and show at first a variaty of colours.  
 Pay attention and try to remember the colours and the positions.
