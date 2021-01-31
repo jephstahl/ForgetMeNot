@@ -5,7 +5,7 @@ ServicePortSerial Sp;
 ///VARIABLES
 byte numBlinks = 6;
 Color gameColors[] =  {RED, YELLOW, GREEN, BLUE};
-Color gameColorsAlt[] = {MAGENTA, ORANGE,CYAN, WHITE};
+Color gameColorsAlt[] = {MAGENTA, ORANGE, CYAN, WHITE};
 
 byte truecolor;
 byte lostcolor;
@@ -27,7 +27,7 @@ bool onFlag = false;
 byte level = 0;
 byte over = 0;
 byte winstate = 0;
-byte numColors = 4;
+byte numColors = 3;
 
 ///for color ramp
 #define STEP_SIZE 10
@@ -47,18 +47,30 @@ void loop() {
     case SETUP:
       setupLoop();
       setupDisplay();
+      FOREACH_FACE(f) {
+        byte sendData = (gameState << 4) + (blinkTrue[f] << 1) + blinkLost[f];
+        setValueSentOnFace(sendData, f);
+      }
       break;
     case LOSTREADY:
-//      Sp.println("LOSTREADY");
+      //      Sp.println("LOSTREADY");
       lostReady();
       readyDisplay();
+      FOREACH_FACE(f) {
+        byte sendData = (gameState << 4) + (blinkTrue[f] << 1) + blinkLost[f];
+        setValueSentOnFace(sendData, f);
+      }
       break;
     case END:
-//      Sp.println("END");
+      //      Sp.println("END");
       endLoop();
+      FOREACH_FACE(f) {
+        byte sendData = (gameState << 4) + (over << 1) + (winstate);
+        setValueSentOnFace(sendData, f);
+      }
       break;
     case GAME:
-//      Sp.println("GAME");
+      //      Sp.println("GAME");
       gameLoop();
       gameDisplay();
       byte sendData = (gameState << 4) + (over << 1) + (winstate);
@@ -67,13 +79,6 @@ void loop() {
   }
   //clear button presses
   buttonSingleClicked();
-  //set communications
-  if (gameState != GAME) {
-    FOREACH_FACE(f) {
-      byte sendData = (gameState << 4) + (blinkTrue[f] << 1) + blinkLost[f];
-      setValueSentOnFace(sendData, f);
-    }
-  }
 }
 
 void setupLoop() {
@@ -93,22 +98,22 @@ void setupLoop() {
     canBeMaster = false;
   }
   if (buttonSingleClicked() && canBeMaster == true) {
-//    Sp.println("buttonx2");
+    //    Sp.println("buttonx2");
     setLost();
     gameState = LOSTREADY;
     canBeMaster = false;
     isMaster = true;
-//    Sp.println("done button");
+    //    Sp.println("done button");
   }
   FOREACH_FACE(f) {
     if (!isValueReceivedOnFaceExpired(f)) {
       byte neighborData = getLastValueReceivedOnFace(f);
-//      Sp.print("data:");
-//      Sp.println(getGameState(neighborData), BIN);
+      //      Sp.print("data:");
+      //      Sp.println(getGameState(neighborData), BIN);
       if (getGameState(neighborData) == LOSTREADY) {
         gameState = GAME;
         // displayState = PREP;
-        masterFace = f;//will only listen for packets on this face
+        masterFace = f;
       }
     }
   }
@@ -119,24 +124,20 @@ void lostReady() {
   FOREACH_FACE(f) {
     if (!isValueReceivedOnFaceExpired(f)) {
       byte neighborData = getLastValueReceivedOnFace(f);
-//      Sp.print("READY: ");
-//      Sp.print(f);
-//      Sp.print(" ");
-//      Sp.println(neighborData, BIN);
+      //      Sp.print("READY: ");
+      //      Sp.print(f);
+      //      Sp.print(" ");
+      //      Sp.println(neighborData, BIN);
       if ((neighborData & 3) == 3) {
-//        Sp.println("HERE");
-        level++;
+        //        Sp.println("HERE");
         gameState = END;
         over = 1;
         winstate = 1;
-        break;
       }
       if ((neighborData & 3) == 2) {
-        level = 0;
         gameState = END;
         over = 1;
         winstate = 0;
-        break;
       }
     }
   }
@@ -187,7 +188,7 @@ void gameLoop() {
           totalFlash.set(5000);
         }
       } else if (getGameState(getLastValueReceivedOnFace(masterFace)) == END) {
-        gameState = SETUP;
+        getGlobalInfo();
       }
       break;
     case WIN:
@@ -235,20 +236,20 @@ void readyDisplay() {
 void gameDisplay() {
   switch (displayState) {
     case PREP:
-//      Sp.println("PREP");
+      //      Sp.println("PREP");
       setColor(OFF);
       setColorOnFace(GREEN, masterFace);
       break;
     case TRUE:
-//      Sp.println("TRUE");
+      //      Sp.println("TRUE");
       setColor(gameColors[truecolor]);
       break;
     case HIDDEN:
-//      Sp.println("HIDDEN");
+      //      Sp.println("HIDDEN");
       setColor(OFF);
       break;
     case LOST:
-//      Sp.println("LOST");
+      //      Sp.println("LOST");
       if (lostBlink) {
         setColor(gameColors[lostcolor]);
       } else {
@@ -296,7 +297,35 @@ void endLoop() {
   }
 }
 
+void getGlobalInfo() {
+  if (!isValueReceivedOnFaceExpired(masterFace)) {
+    byte neighborData = getLastValueReceivedOnFace(masterFace);
+    Sp.print("Global: ");
+    Sp.println(neighborData, BIN);
+    if ((neighborData & 3) == 3) {
+      over = 1;
+      winstate = 1;
+      gameState = SETUP;
+    }
+    if ((neighborData & 3) == 2) {
+      over = 1;
+      winstate = 0;
+      gameState = SETUP;
+    }
+  }
+
+}
+
 void resetLoop() {
+  if (over && winstate) {
+    level++;
+    Sp.print("Level Up: ");
+    Sp.println(level);
+  } else if (over && !winstate) {
+    level = 0;
+    Sp.print("Lost: ");
+    Sp.println(level);
+  }
   displayState = PREP;
   onFlag = false;
   over = 0;
@@ -317,9 +346,9 @@ byte getGameState(byte data) {
 }
 
 void setLost() {
-//  Sp.println("setLost");
+  //  Sp.println("setLost");
   lostBlink = random(numBlinks - 1);            // calculate which blink if lost
-  for (int i = 0; i < numBlinks; i++) {  
+  for (int i = 0; i < numBlinks; i++) {
     blinkTrue[i] = random(numColors);           // give each blink a colour index
     if (i == lostBlink) {
       blinkLost[i] = 1;                         // set an array to let the others know who will be lost
