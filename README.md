@@ -4,13 +4,16 @@
 GAME OVERVIEW
 A Single Player Memory Puzzle with 7 Blinks
 
-"Forget Me Not" is a game children play with by pulling petals off of a flower to determine if a love, loves them back.
+"Loves me... Loves me not" is a game children play with by pulling petals off of a flower to determine if a love, loves them back.
 In ForgetMeNot for Blinks, we recall our lost loves again, and test our memory with this challenging game.
 The petals of the flowers will bloom and show at first a variaty of colours.  
 Pay attention and try to remember the colours and the positions.
 Time passes and the flower folds up and the blink petals go dark... keep remembering..
 The flower unfolds again, but one petal has been lost to you memory... OR HAS IT???
-Identify the changed petal and progress throught he level.
+Identify the changed petal and progress throught the different flowers, and evetually increased difficulty
+
+There is no scoring in this game, each flower you can picture peticular someone in your minds eye.
+Did you succeed?  Maybe they do indeed love you.  Fail? Sorry.... next flower!!
 
 SETUP
 
@@ -25,8 +28,8 @@ Next the petals will go dark.
 When they return 1 will be LOST.
 Identify the LOST petal by single clicking on where it was.
 If you are correct this blink will pulse with the memory, and you can progress to the next round of difficulty.
-If you are incorrect the flower will blush red and your progress will be lost and the game will restart.
+If you are incorrect the flower will blush red but you can continue.
 
 TODO:
 
-As of Jan 30 4:33 2021 only the first level is implemented.  But I am working on up to 9 levels with a variety of changes.
+tweaking animations
