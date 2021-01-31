@@ -1,4 +1,4 @@
-# ForgetMeNot
+# ForgetMeNot by Jeph Stahl Boardgamebrewer
  Global Game Jam Design Lost&Found 2021 for Move38 Blinks
 
 GAME OVERVIEW
