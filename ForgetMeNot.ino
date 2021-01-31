@@ -38,7 +38,7 @@ int hidetime = 3000;
 byte difficulty = 0;
 
 ///for color ramp
-#define STEP_SIZE 10
+int STEP_SIZE = 10;
 #define STEP_TIME_MS 30
 int brightness = 1;
 int step = STEP_SIZE;
@@ -297,11 +297,11 @@ void gameDisplay() {
             if (level == 5) setColorOnFace(chip, truecolor);
             onFlag = false;
           } else {
-            if (level == 1) setColor(gameColors0[lostcolor]);
-            if (level == 2) setColor(gameColors1[lostcolor]);
-            if (level == 3) setColor(gameColors2[lostcolor]);
-            if (level == 4) setColor(gameColors3[lostcolor]);
-            if (level == 5) setColorOnFace(chip, lostcolor);
+            if (level == 1) setColor(OFF);
+            if (level == 2) setColor(OFF);
+            if (level == 3) setColor(OFF);
+            if (level == 4) setColor(OFF);
+            if (level == 5) setColor(OFF);
             onFlag = true;
           }
           flashTimer.set(500);
@@ -354,10 +354,12 @@ void getGlobalInfo() {
 void resetLoop() {
   if (runonce) {
     level++;
-    showtime = showtime - (difficulty * 500);
+    showtime = 4000 - (difficulty * 1000);
     if (showtime < 1000) showtime = 1000;
-    hidetime = hidetime + (difficulty * 500);
-    if (hidetime > 6000) hidetime = 6000;
+    hidetime = 2000 + (difficulty * 1000);
+    if (hidetime > 5000) hidetime = 5000;
+    STEP_SIZE = 10+ (difficulty * 20);
+    if (STEP_SIZE > 70) STEP_SIZE = 70; 
   }
   if (level > 5) {
     level = 1;
