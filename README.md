@@ -1,7 +1,8 @@
-# ForgetMeNot by Jeph Stahl Boardgamebrewer
- Global Game Jam Design Lost&Found 2021 for Move38 Blinks
+# ForgetMeNot
+## by Jeph Stahl (Boardgamebrewer)
+#### Global Game Jam Design Lost&Found 2021 for Move38 Blinks
 
-GAME OVERVIEW
+### GAME OVERVIEW
 A Single Player Memory Puzzle with 7 Blinks
 
 "Loves me... Loves me not" is a game children play with by pulling petals off of a flower to determine if a love, loves them back.
@@ -15,12 +16,12 @@ Identify the changed petal and progress throught the different flowers, and evet
 There is no scoring in this game, each flower you can picture peticular someone in your minds eye.
 Did you succeed?  Maybe they do indeed love you.  Fail? Sorry.... next flower!!
 
-SETUP
+### SETUP
 
-Assemble 7 blinks in a shape of a flower blossom, with 1 blink in the center of 6 blink petals.
+Assemble seven blinks in a shape of a flower blossom, with one blink in the center of six blink petals.
 The center blink will pulse green, indicating it is ready to bloom and start the first round.
 
-GAMEPLAY
+### GAMEPLAY
 
 Single click the center blink to start.
 First the new petals will be displayed.
@@ -30,6 +31,6 @@ Identify the LOST petal by single clicking on where it was.
 If you are correct this blink will pulse with the memory, and you can progress to the next round of difficulty.
 If you are incorrect the flower will blush red but you can continue.
 
-TODO:
+### TODO:
 
-tweaking animations
+tweaking animations and cleaning code
